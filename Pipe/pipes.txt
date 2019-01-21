@@ -1,0 +1,166 @@
+oobles@loose.apana.org.au (David Ryan):
+
+Recently there have been quite a few queries about Pipes and stdin/stdout
+redirection on the comp.os.os2.programming.misc forum.  These two small
+programs do both, and serve as a good example.  I threw these together
+over a few hours, so it may do a few redundant things, however it does
+work.
+
+What does it do?  Just a very simple Telnet type program over named pipes.
+I intended to use it so that I could compile my programmes on other
+machines in the office, but as we aren't running peer services, they are
+of no use to me.
+
+--------------------------------SERV.C------------------------------
+#define INCL_DOSQUEUES
+#define INCL_DOS
+#include <os2.h>
+
+#include <process.h>
+
+#define PIPESIZE 256
+#define HF_STDIN 0
+#define HF_STDOUT 1
+#define HF_STDERR 2
+
+
+HPIPE hpOutR, hpOutW;
+HPIPE hpInR, hpInW;
+HPIPE hpErrR, hpErrW;
+HPIPE NmPipeHandle;
+
+RESULTCODES resc;
+
+CHAR szFailName[CCHMAXPATH];
+
+void read( void *dummy )
+{
+    ULONG cbRead, cbWritten;
+    CHAR achBuf[PIPESIZE];
+
+    do {
+       DosRead( hpOutR, achBuf, sizeof(achBuf), &cbRead );
+       DosWrite( NmPipeHandle, achBuf, cbRead, &cbWritten );
+    } while ( cbRead );
+}
+
+void write( void *dummy )
+{
+   ULONG cbRead, cbWritten;
+   CHAR achBuf[PIPESIZE];
+
+   do {
+       DosRead( NmPipeHandle, achBuf, sizeof(achBuf), &cbRead );
+       DosWrite( hpInW, achBuf, cbRead, &cbWritten );
+    } while ( cbRead );
+}
+
+main(int argc, char *argv[], char *envp[])
+{
+    APIRET rc;
+
+    HFILE hfSaveOut = -1, hfNewOut = HF_STDOUT;
+    HFILE hfSaveIn  = 10, hfNewIn  = HF_STDIN;
+
+    DosDupHandle( HF_STDOUT , &hfSaveOut );
+    DosDupHandle( HF_STDIN  , &hfSaveIn  );
+
+    DosCreatePipe( &hpOutR, &hpOutW, PIPESIZE);
+    DosCreatePipe( &hpInR , &hpInW , PIPESIZE);
+
+    DosDupHandle( hpOutW, &hfNewOut );
+    DosDupHandle( hpInR,  &hfNewIn  );
+
+    DosExecPgm( szFailName, sizeof(szFailName),
+                EXEC_ASYNC, (PSZ) NULL, (PSZ) NULL, &resc,
+                "C:\\OS2\\CMD.EXE");
+
+    DosClose(hpOutW);
+    DosClose(hpInR);
+
+    DosDupHandle( hfSaveOut, &hfNewOut );
+    DosDupHandle( hfSaveIn,  &hfNewIn  );
+
+    rc = DosCreateNPipe( "\\\\W304743B\\PIPE\\CMDPIPE", &NmPipeHandle ,
+NP_ACCESS_DUPLEX,
+                NP_WMESG | NP_RMESG | 0x01, 256 , 256 , -1 );
+    if ( rc ) return 0;
+
+    rc = DosConnectNPipe( NmPipeHandle );
+    if ( rc ) return 0;
+
+    _beginthread( &write , NULL, 64000, NULL );
+    read( NULL );
+    return 1;
+}
+
+---------------------------------------CLNT.C---------------------
+#define INCL_DOSQUEUES
+#define INCL_DOS
+#include <os2.h>
+
+#include <process.h>
+#include <string.h>
+#include <stdio.h>
+
+#define PIPESIZE 256
+#define SERVER_PIPE_NAME "\\PIPE\\CMDPIPE"
+#define HF_STDIN 0
+#define HF_STDOUT 1
+
+HPIPE hp;
+ULONG ulAction;
+APIRET rc;
+
+
+void read( void *dummy )
+{
+    ULONG cbRead, cbWritten;
+    CHAR achBuf[PIPESIZE];
+
+    do {
+       DosRead( hp, achBuf, sizeof(achBuf), &cbRead );
+       DosWrite( HF_STDOUT, achBuf, cbRead, &cbWritten );
+    } while ( cbRead );
+}
+
+void write( void *dummy )
+{
+   ULONG cbRead, cbWritten;
+   CHAR achBuf[PIPESIZE];
+
+   do {
+       DosRead( HF_STDIN, achBuf, sizeof(achBuf), &cbRead );
+       DosWrite( hp, achBuf, cbRead, &cbWritten );
+    } while ( cbRead );
+}
+
+
+main(int argc, char *argv[], char *envp[])
+{
+    CHAR ServerPipe[CCHMAXPATH];
+
+    if ( argc != 2 ) return 0;
+
+    strcpy( ServerPipe, "" );
+
+    strcpy( ServerPipe, "\\\\" );
+    strcat( ServerPipe, argv[1] );
+
+    strcat( ServerPipe, SERVER_PIPE_NAME );
+
+    printf( "%s\n", ServerPipe );
+
+    rc = DosOpen( ServerPipe, &hp, &ulAction, 0,
+                FILE_NORMAL, FILE_OPEN,
+                OPEN_ACCESS_READWRITE | OPEN_SHARE_DENYNONE,
+                NULL );
+
+    if ( rc ) return 0;
+
+    _beginthread( &write , NULL, 64000, NULL );
+    read( NULL );
+
+    DosClose( hp );
+    return 0;
+}

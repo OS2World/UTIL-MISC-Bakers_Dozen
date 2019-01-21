@@ -1,0 +1,101 @@
+DLLsubs.c                                                                                      05/06/95 11:35:17     Page     1
+                                      * * * * *   P R O L O G   * * * * *
+
+ Compiler . . . . . . . . . . . . : IBM C/C++ Tools V2.01
+ Command options:
+    Compiler mode . . . . . . . . : C
+    Program name. . . . . . . . . : DLLsubs.c
+    Object name . . . . . . . . . : "dllsubs.obj"
+    Executable name . . . . . . . : "dlltest.exe"
+    Listing name. . . . . . . . . : dllsubs.lst
+    Compiler options. . . . . . . : /C-  /Fa- /Fc- /Fd- /Fi- /Fl+ /Fm- /Fo+ /Fw- /Gd- /Ge+ /Gf- /Gh- /Gi- /Gm+ /Gn- /Gr- /Gs-
+                                  : /Gt- /Gu- /Gv- /Gw- /J+  /L+  /La- /Lb- /Le- /Lf- /Li- /Lj- /Ls+ /Lx- /Ly- /O-  /Ol- /Om-
+                                  : /Op+ /Os- /P-  /Pc- /Pd- /Pe- /Q+  /Sd- /Sh- /Si- /Sm- /Sn- /Sr- /Ss- /Sv- /Ti- /Tm- /Tx-
+                                  : /Xi-
+                                  : /Wcls+ /Wcmp+ /Wcnd+ /Wcns+ /Wcnv+ /Wcpy+ /Wdcl+ /Weff+ /Wenu+ /Wext+ /Wgen+ /Wgnr+ /Wgot+
+                                  : /Wini- /Wlan+ /Wobs+ /Word+ /Wpar+ /Wpor+ /Wppc+ /Wppt- /Wpro+ /Wrea+ /Wret+ /Wtrd- /Wtru+
+                                  : /Wund+ /Wuni- /Wuse+ /Wvft+
+                                  : /Mp  /Re  /Se  /Sp4  /G3  /W3  /H255  /Lp58  /Sg-  /Sq-  /N  /Oi0  /Su-  /Tl10 
+                                  : /I  
+                                  : /Lt 
+                                  : /Lu 
+                                  : /B  /Align:4 /Base:0x10000 /ExePack
+                                  : /V  
+DLLsubs.c                                                                                      05/06/95 11:35:17     Page     2
+                                          * * * * *   S O U R C E   * * * * *
+
+ LINE  STMT                                                                                                       SEQNBR INCNO
+             *...+....1....+....2....+....3....+....4....+....5....+....6....+....7....+....8....+....9.......*
+    1       |/* $title:      'DLLTEST.C ===== Try out DLLs in OS/2 =====' */                                   |      1           
+    2       |/* $subtitle:   'Elipse Ltd.  [jms]    Revised: 1995 May 06' */                                   |      2           
+    3       |                                                                                                  |      3           
+    4       |                                                                                                  |      4           
+    5       |#include <stdio.h>                                                                                |      5           
+    6       |#include <string.h>                                                                               |      6           
+    7       |                                                                                                  |      7           
+    8       |int main( int argc, char *argv[] );                                                               |      8           
+    9       |void dlltest( void );                                                                             |      9           
+   10       |                                                                                                  |     10           
+   11       |void dll_init( void );                                                                            |     11           
+   12       |void dll_get( char *buf, int len );                                                               |     12           
+   13       |void dll_put( const char *buf );                                                                  |     13           
+   14       |                                                                                                  |     14           
+   15       |                                                                                                  |     15           
+   16       |/* MAIN ===== Starting point ===== $pageif:6 */                                                   |     16           
+   17       |                                                                                                  |     17           
+   18       |int main( int argc, char *argv[] )                                                                |     18           
+   19       |    {                                   /* main */                                                |     19           
+   20     1 |    printf( "\nDLLtest\n" );                                                                      |     20           
+   21     2 |    dlltest( );                                                                                   |     21           
+   22     3 |    printf( "\nEnd program\n" );                                                                  |     22           
+   23     4 |    return 0;                                                                                     |     23           
+   24       |    }                                   /* main */                                                |     24           
+*=INFORMATIONAL===>     EDC0800 Parameter argv is not referenced.                                                        
+*=INFORMATIONAL===>     EDC0800 Parameter argc is not referenced.                                                        
+   25       |                                                                                                  |     25           
+   26       |                                                                                                  |     26           
+   27       |/* DLLTEST ===== Body of program ===== $pageif:6 */                                               |     27           
+   28       |                                                                                                  |     28           
+   29       |void dlltest( void )                                                                              |     29           
+   30       |    {                                   /* dlltest */                                             |     30           
+   31       |    char buf[1024];                                                                               |     31           
+   32     5 |    memset( buf, '\0', sizeof( buf ) );                                                           |     32           
+   33     6 |    while (1)                                                                                     |     33           
+===========> ...........a......................................................................................
+*=INFORMATIONAL===> a - EDC0821 Relational expression is always true.                                                    
+   34       |        {                                                                                         |     34           
+   35     7 |        dll_get( buf, sizeof( buf ) );                                                            |     35           
+   36     8 |        printf( "\nReturned string is: %s\n", buf );                                              |     36           
+   37     9 |        printf( "\nInput replacement string (* to quit):\n" );                                    |     37           
+   38    10 |        gets( buf );                                                                              |     38           
+   39    11 |        if ((buf[0] == '\0') || (buf[0] =='*'))                                                   |     39           
+   40    12 |            return;                                                                               |     40           
+   41    13 |        dll_put( buf );                                                                           |     41           
+   42       |        }                                                                                         |     42           
+   43       |    }                                   /* dlltest */                                             |     43           
+                                    * * * * *   E N D   O F   S O U R C E   * * * * *
+DLLsubs.c                                                                                      05/06/95 11:35:17     Page     3
+                        * * * * *   I N C L U D E S   * * * * *
+
+INCLUDE FILES  ---  FILE#   NAME
+                      1       C:\IBMCPP\INCLUDE\STDIO.H
+                      2       C:\IBMCPP\INCLUDE\STRING.H
+
+                        * * * * *   E N D   O F   I N C L U D E S   * * * * *
+DLLsubs.c                                                                                      05/06/95 11:35:17     Page     4
+                             * * * * *   M E S S A G E   S U M M A R Y   * * * * *
+
+        Total            Informational(00)          Warning(10)          Error(30)            Severe Error(40)
+
+          3                    3                        0                   0                        0
+
+                        * * * * *   E N D   O F   M E S S A G E   S U M M A R Y   * * * * *
+DLLsubs.c                                                                                      05/06/95 11:35:17     Page     5
+                                   * * * * *   M E S S A G E S   * * * * *
+MSG ID      SEV     TEXT
+                    <SEQNBR>-<FILE NO>:<FILE LINE NO>
+EDC0800      0      Parameter is not referenced.                                                                                 
+                     ( 24-0:24, 24-0:24 )
+EDC0821      0      Relational expression is always true.                                                                        
+                     ( 33-0:33 )
+                             * * * * *   E N D   O F   M E S S A G E S   * * * * *

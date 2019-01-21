@@ -1,0 +1,30 @@
+!---- WT230sample_488_2e.txt
+!
+*RST                            !Initialize the settings
+@750
+SAMPLE:HOLD OFF                 !Hold off
+MODE RMS                        !Measurment Mode = RMS
+FILTER OFF                      !Frequency Filter off
+LFILTER OFF                     !Line Filter off
+SCALING OFF;AVERAGING OFF       !Scaling & Averaging off
+VOLTAGE:RANGE 150V              !Voltage range = 150V
+CURRENT:RANGE 5A                !Current range = 5A
+DISPLAY3:FUNCTION VHZ;ELEMENT 1
+MEASURE:ITEM:PRESET NORMAL
+MEASURE:ITEM:VHZ:ELEMENT1 ON
+STATUS:FILTER1 FALL             !Falling edge of bit0(UPD)
+STATUS:EESR?
+!
+@250
+COMMUNICATE:WAIT 1
+MEASURE:NORMAL:VALUE?
+@250
+COMMUNICATE:WAIT 1
+MEASURE:NORMAL:VALUE?
+@250
+COMMUNICATE:WAIT 1
+MEASURE:NORMAL:VALUE?
+@250
+COMMUNICATE:WAIT 1
+MEASURE:NORMAL:VALUE?
+

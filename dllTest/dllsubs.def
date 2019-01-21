@@ -1,0 +1,7 @@
+LIBRARY DLLsubs
+DESCRIPTION 'Elipse Ltd. [jms]'
+CODE LOADONCALL
+DATA LOADONCALL MULTIPLE
+EXPORTS dll_init
+        dll_get
+        dll_put

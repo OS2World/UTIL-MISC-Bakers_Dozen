@@ -1,0 +1,8 @@
+/* $title:      'ADJTEXT.C ===== Flow text to fit given width =====' */
+/* $subtitle:   'Elipse Ltd.  [jms]            Revised: 1992 Dec 29' */
+
+
+#load except
+#load hyphen
+#load adjfile
+#load adjtext

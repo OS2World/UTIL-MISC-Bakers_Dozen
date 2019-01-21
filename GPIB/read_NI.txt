@@ -1,0 +1,48 @@
+Win32 Direct Entry
+
+This directory contains the following:
+
+     README.TXT           -  This readme file
+     <subdirectories>     -  Contain different sample applications
+
+The sample applications help you learn how to use direct entry to
+access the 32-bit NI-488.2 API. The use of direct entry means that 
+the application takes the responsibility of accessing the 32-bit 
+GPIB DLL. Direct access to the 32-bit GPIB DLL is accomplished by 
+loading the DLL when the application is ready to use it (using 
+LoadLibrary), obtaining addresses of the global variables and 
+functions that the application needs to use (using GetProcAddress), 
+and finally, unloading the DLL (using FreeLibrary) before exiting.
+
+The C sample applications are Win32 console applications. They 
+illustrate how to use the NI-488.2 API. A Win32 console application 
+is a Win32 application which uses text-based input and output, not a 
+graphical interface. This allows you to quickly create a Win32 
+application by using simple input and output functions like printf 
+and scanf.
+
+
+Choosing How to Access GPIB-32.DLL
+----------------------------------
+
+Applications can access GPIB-32.DLL by using either the Win32
+Microsoft C/C++ language interface, the Win32 Borland C/C++ language
+interface, the Win32 Microsoft Visual Basic language interface, or
+direct entry. If you are using Microsoft C/C++, Borland C/C++, or
+Microsoft Visual Basic, use the corresponding language interface to
+develop your application. If you are using any other development
+environment, you must use direct entry.
+
+
+Choosing How to Access NI4882.DLL
+----------------------------------
+
+Applications can access NI4882.DLL by using either the Win32 or 
+Win64 Microsoft C/C++ language interface, or the Win32 Borland C/C++ 
+language interface. Use of direct entry is not allowed. If you are 
+using Microsoft C/C++ or Borland C/C++, use the corresponding language 
+interface to develop your Windows application. 
+
+
+Copyright National Instruments Corporation.
+All Rights Reserved.

@@ -1,0 +1,33 @@
+!---- Try out Energuide requirememts
+!
+! Set up
+*RST                            !Initialize the settings
+@750
+SAMPLE:HOLD OFF                 !Hold off
+SAMPLE:RATE 0.25                !Seconds
+MODE RMS                        !Measurment Mode = RMS
+FILTER OFF                      !Frequency Filter off
+LFILTER OFF                     !Line Filter off
+SCALING OFF;AVERAGING OFF       !Scaling & Averaging off
+VOLTAGE:RANGE 200V              !Voltage range = 200V
+CURRENT:RANGE 15A               !Current range = 15A
+MEASURE:ITEM:PRESET NORMAL
+MEASURE:ITEM:V:ELEMENT1 ON      !Read volts
+MEASURE:ITEM:A:ELEMENT1 ON      !Read amps
+MEASURE:ITEM:W:ELEMENT1 ON      !Read watts
+MEASURE:ITEM:WH:ELEMENT1 ON     !Read watt-hr
+MEASURE:ITEM:VHZ:ELEMENT1 ON    !Read frequency
+MEASURE:ITEM:PF:ELEMENT1 ON     !Read power factor
+INTEGRATE:MODE NORMAL
+INTEGRATE:RESET
+INTEGRATE:START
+STATUS:EESR?
+!
+@500
+MEASURE:NORMAL:VALUE?
+@500
+MEASURE:NORMAL:VALUE?
+@500
+INTEGRATE:STOP
+MEASURE:NORMAL:VALUE?
+
